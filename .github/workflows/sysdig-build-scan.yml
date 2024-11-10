@@ -26,4 +26,4 @@ jobs:
           chmod +x sysdig-cli-scanner
 
       - name: Scan Docker image
-        run: SECURE_API_TOKEN=${{ secrets.SYSDIG_API_TOKEN }} ./sysdig-cli-scanner --apiurl https://secure.sysdig.com voting-app-${{ matrix.container }}:sysdig-scan
+        run: SECURE_API_TOKEN=${{ secrets.SYSDIG_API_TOKEN }} ./sysdig-cli-scanner --apiurl ${{ secrets.SYSDIG_API_URL }} voting-app-${{ matrix.container }}:sysdig-scan
