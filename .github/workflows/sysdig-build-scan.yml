@@ -1,0 +1,29 @@
+name: Build and Scan the Voting App Repo Images via Sysdig CLI Scanner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    strategy:
+      matrix:
+        container: [vote, result, worker]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.container }}
+          load: true
+          tags: voting-app-${{ matrix.container }}:sysdig-scan
+
+      - name: Install Sysdig CLI
+        run: |
+          curl -LO "https://download.sysdig.com/scanning/bin/sysdig-cli-scanner/$(curl -L -s https://download.sysdig.com/scanning/sysdig-cli-scanner/latest_version.txt)/linux/amd64/sysdig-cli-scanner"
+          chmod +x sysdig-cli-scanner
+
+      - name: Scan Docker image
+        run: SECURE_API_TOKEN=${{ secrets.SYSDIG_API_TOKEN }} ./sysdig-cli-scanner --apiurl https://secure.sysdig.com voting-app-${{ matrix.container }}:sysdig-scan
