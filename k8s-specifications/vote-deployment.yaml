@@ -22,3 +22,9 @@ spec:
           name: vote
         securityContext:
           readOnlyRootFilesystem: true
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+    volumes:
+    - name: tmp-volume
+      emptyDir: {}
